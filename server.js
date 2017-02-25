@@ -33,24 +33,16 @@ io.sockets.on('connection',
 		console.log('socket server is running'); 
 		console.log('new connection ' + socket.id);
 
-		// socket.on('mouse', function(data) {
-			
-		// 	console.log(data);
-		// 	//socket.broadcast.emit('otherdrawing', data); 
-		// });
+		socket.on('tagged', function(data){
+			console.log('yes tagged');
 
-		socket.on('tagged', function(){
-			console.log('yes');
+			socket.broadcast.emit('tagged', data);
+			// drawTagged(data.x, data.y); 
 		});
 
 		socket.on('test', function(){
 			console.log("test");
 		});
-
-		//listen for and receive tagged event
-		// socket.on('tagged', function(data){
-		// 	console.log("tagged happened, x: " + data.x + ", y:" + data.y);
-		// });
 
 		socket.on('disconnect', function() {
 			console.log("Client has disconnected " + socket.id);

@@ -24,8 +24,11 @@
     // listen for socket events from server
     socket.on('mouse', function(data){
       console.log("received other drawing" + data); 
-    })
+    });
 
+    socket.on('tagged', function(data){
+      drawTagged(data.x, data.y);
+    });
     //sendTags(data.x, data.y, data.r, data.g, data.b); 
 
   </script>

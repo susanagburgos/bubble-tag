@@ -1,4 +1,5 @@
 var pins = []; // array of objects
+var pinsTagged = []
 var d; // diameter of circles 
 var r; 
 var tag;
@@ -22,16 +23,21 @@ function setup() {
 	pins.push(new Pin(randX, randY, speedX, speedY)); 
   }	
 
-  socket = io.connect('http://localhost:8080');
+  socket = io.connect('http://138.197.215.239:8080');
+
 }
 
 function draw() {	
-	socket.emit('test');
-	
 	background(0); 
+
 	for(var i = 0; i < pins.length; i++) {
 		pins[i].display();
 		pins[i].move();
+	} 
+
+	for(var i = 0; i < pinsTagged.length; i++) {
+		pinsTagged[i].display(); // displays the tagged ones
+		pinsTagged[i].move(); // this changes to 0 once bubble gets tagged
 	}	
 }
 
@@ -52,8 +58,6 @@ function windowResize() {
 }
 
 function mousePressed() {
-
-	
 
 	// if mouse is pressed, check if mouse is on bubble
 	// if mouse is on ball change color of that bubble
@@ -76,12 +80,12 @@ function mousePressed() {
 	// socket.emit('mouse', data);
 }
 
-function Pin(x, y, speedX, speedY) {
+function Pin(x, y, speedX, speedY, clr) {
 	this.x = x; // position of circle
 	this.y = y; 
-	this.color = color(255);
 	this.speedX = speedX; // speed of circle
 	this.speedY = speedY;
+	this.color = color(255);
 
 	this.display = function() {
 		fill(this.color);
@@ -119,7 +123,7 @@ function Pin(x, y, speedX, speedY) {
 			sendTags({
 				'x': this.x,
 				'y': this.y,
-				'color': this.color		
+				//'color': this.color		
 			}); 
 
 		} // end of if statement
@@ -135,4 +139,11 @@ function sendTags(message) {
 	//this sends the tagged pin's x and y coordinates
 	socket.emit('tagged', message);
 } 
+
+function drawTagged(theX, theY) { 
+	// once our circle is tagged  we create a new object 
+	// that gets stored in our new array 
+	console.log("drawing tagged: " + theX + ", " + theY);
+	pinsTagged.push(new Pin(theX, theY, 0,0));
+}
 
