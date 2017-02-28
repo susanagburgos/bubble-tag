@@ -27,8 +27,9 @@
     });
 
     socket.on('tagged', function(data){
-      drawTagged(data.x, data.y);
+      drawTagged(data.x, data.y, data.color);
     });
+
     //sendTags(data.x, data.y, data.r, data.g, data.b); 
 
   </script>

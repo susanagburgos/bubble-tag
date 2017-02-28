@@ -19,8 +19,9 @@ function setup() {
   	var speedY = random(-4, 4);
   	var randX = random(0, windowWidth);
 	var randY = random(0, windowHeight);
+	var color = 'red';
 
-	pins.push(new Pin(randX, randY, speedX, speedY)); 
+	pins.push(new Pin(randX, randY, speedX, speedY, color)); 
   }	
 
   socket = io.connect('http://138.197.215.239:8080');
@@ -28,7 +29,7 @@ function setup() {
 }
 
 function draw() {	
-	background(0); 
+	background(255); 
 
 	for(var i = 0; i < pins.length; i++) {
 		pins[i].display();
@@ -49,7 +50,6 @@ function updateTags(ballX, ballY, speedX, speedY, ballColor) {
 	// updating info of tags that I am receiving
 	// how can I update
 	// I want ball being passed that have 0 speed
-
 } 
 */ 
 
@@ -80,17 +80,22 @@ function mousePressed() {
 	// socket.emit('mouse', data);
 }
 
-function Pin(x, y, speedX, speedY, clr) {
+function Pin(x, y, speedX, speedY, theColor) {
 	this.x = x; // position of circle
 	this.y = y; 
 	this.speedX = speedX; // speed of circle
 	this.speedY = speedY;
-	this.color = color(255);
+	this.color = theColor;
 
 	this.display = function() {
-		fill(this.color);
-		ellipse(this.x, this.y, d, d);
+		if(this.color != 'red') {
+			fill(this.color);
+		} else {
+			fill('red');
+		}
 
+		noStroke();
+		ellipse(this.x, this.y, d, d);
 	}
 
 	this.move = function() {
@@ -114,16 +119,17 @@ function Pin(x, y, speedX, speedY, clr) {
 		var dis = dist(mouseX, mouseY, this.x, this.y);
 
 		if (dis < 25) {
-			this.color = color(255, 0, 200);
+			//this.color = color(255, 0, 200);
+			this.color = 'blue';
 			this.speedX = 0; 
 			this.speedY = 0; 
 
-			console.log('tagged x:' + this.x + ', y: ' + this.y);
+			// console.log('tagged x:' + this.x + ', y: ' + this.y);
 
 			sendTags({
 				'x': this.x,
 				'y': this.y,
-				//'color': this.color		
+				'color': this.color		
 			}); 
 
 		} // end of if statement
@@ -132,18 +138,16 @@ function Pin(x, y, speedX, speedY, clr) {
 
 }// end of pin object
 
-// referenced for object help: The Coding Train
-
 function sendTags(message) {
 	console.log("sending tags to the server");
 	//this sends the tagged pin's x and y coordinates
 	socket.emit('tagged', message);
 } 
 
-function drawTagged(theX, theY) { 
+function drawTagged(theX, theY, theColor) { 
 	// once our circle is tagged  we create a new object 
 	// that gets stored in our new array 
-	console.log("drawing tagged: " + theX + ", " + theY);
-	pinsTagged.push(new Pin(theX, theY, 0,0));
+	console.log("drawing tagged: " + theX + ", " + theY + ", " + theColor);
+	pinsTagged.push(new Pin(theX, theY, 0,0, theColor));
 }
 
